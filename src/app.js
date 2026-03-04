@@ -4,6 +4,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
+const path = require("path");
 
 const app = express();
 
@@ -18,12 +19,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ── Routes (with error catching per route) ───────────────────────────
-const loadRoute = (path, mountPath) => {
+// ── Routes ───────────────────────────────────────────────────────────
+const loadRoute = (routePath, mountPath) => {
     try {
-        const route = require(path);
+        const route = require(path.join(__dirname, routePath));
         if (typeof route !== "function") {
-            console.error(`❌ Route not a function: ${path}`);
+            console.error(`❌ Route not a function: ${routePath}`);
             return;
         }
         app.use(mountPath, route);
